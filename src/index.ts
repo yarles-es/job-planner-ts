@@ -62,4 +62,4 @@ export class GenerateArrayJobs {
 
 const generateArrayJobs = new GenerateArrayJobs(); // Instancia a classe;
 
-console.log(generateArrayJobs.planJobs(JSONJobs)); // Executa o método planJobs passando o JSON como parâmetro;
+generateArrayJobs.planJobs(JSONJobs); // Executa o método planJobs passando o JSON como parâmetro;

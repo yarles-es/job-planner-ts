@@ -1,3 +1,4 @@
+import moment from "moment";
 import { IJob } from "./interfaces/IJob";
 import { IProcessedJob } from "./interfaces/IProcessedJob";
 import JSONJobs from "./json/jobs.json";
@@ -12,6 +13,18 @@ export class GenerateArrayJobs {
     return processedJobs;
   }
 
+  private formatedJobObjectToString(job: IProcessedJob): IJob {
+    const date = new Date(job["Data Máxima de conclusão"]);
+    const stringDate = moment(date).format("YYYY-MM-DD HH:mm:ss");
+    const stringHours = `${job["Tempo estimado"]} horas`;
+    const newJob = {
+      ...job,
+      "Data Máxima de conclusão": stringDate,
+      "Tempo estimado": stringHours,
+    };
+    return newJob;
+  }
+
   private sortJobs(processedJobs: IProcessedJob[]): IProcessedJob[] {
     processedJobs.sort(
       (a, b) =>
@@ -21,7 +34,7 @@ export class GenerateArrayJobs {
     return processedJobs;
   }
 
-  public planJobs(arrayJobs: IJob[]): IProcessedJob[][] {
+  public planJobs(arrayJobs: IJob[]): IJob[][] {
     const groups: IProcessedJob[][] = [[]];
     const processedJobs = this.createProcessedJobs(arrayJobs);
     this.sortJobs(processedJobs);
@@ -39,7 +52,11 @@ export class GenerateArrayJobs {
       }
     }
 
-    return groups;
+    const jobGroupsFormatted: IJob[][] = groups.map((group) =>
+      group.map(this.formatedJobObjectToString)
+    );
+
+    return jobGroupsFormatted;
   }
 }
 

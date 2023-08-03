@@ -3,20 +3,29 @@ import { IProcessedJob } from "./interfaces/IProcessedJob";
 import JSONJobs from "./json/jobs.json";
 
 export class GenerateArrayJobs {
-  public planJobs(jobs: IJob[]): IProcessedJob[][] {
-    const processedJobs: IProcessedJob[] = jobs.map((job) => ({
+  private createProcessedJobs(arrayJobs: IJob[]): IProcessedJob[] {
+    const processedJobs: IProcessedJob[] = arrayJobs.map((job) => ({
       ...job,
       "Data Máxima de conclusão": new Date(job["Data Máxima de conclusão"]),
       "Tempo estimado": parseInt(job["Tempo estimado"]),
     }));
+    return processedJobs;
+  }
 
+  private sortJobs(processedJobs: IProcessedJob[]): IProcessedJob[] {
     processedJobs.sort(
       (a, b) =>
         a["Data Máxima de conclusão"].getTime() -
         b["Data Máxima de conclusão"].getTime()
     );
+    return processedJobs;
+  }
 
+  public planJobs(arrayJobs: IJob[]): IProcessedJob[][] {
     const groups: IProcessedJob[][] = [[]];
+    const processedJobs = this.createProcessedJobs(arrayJobs);
+    this.sortJobs(processedJobs);
+
     for (const job of processedJobs) {
       const currentGroup = groups[groups.length - 1];
       const currentGroupTime = currentGroup.reduce(
@@ -34,6 +43,6 @@ export class GenerateArrayJobs {
   }
 }
 
-const generateArrayJobs = new GenerateArrayJobs();
-const jobs = generateArrayJobs.planJobs(JSONJobs);
-console.log(jobs);
+const generateArrayJobs = new GenerateArrayJobs(); // Instancia a classe;
+
+console.log(generateArrayJobs.planJobs(JSONJobs)); // Executa o método planJobs passando o JSON como parâmetro;
